@@ -6,7 +6,7 @@ A real-time multiplayer territory map where multiple users compete to claim tile
 
 ##  Live Demo
 
-**Demo:** https://your-demo-url.com
+**Demo:** https://grid-wars-jade.vercel.app/
 
 ---
 
