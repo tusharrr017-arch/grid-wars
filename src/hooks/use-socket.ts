@@ -5,9 +5,8 @@ import type { CaptureEvent, GameState, Tile, User } from "@/types"
 
 type ConnectionStatus = "connecting" | "connected" | "disconnected"
 
-const SOCKET_URL = import.meta.env.DEV
-  ? "http://localhost:3001"
-  : window.location.origin
+const SOCKET_URL =
+  import.meta.env.VITE_SOCKET_URL || "http://localhost:3001"
 
 interface UseSocketReturn {
   status: ConnectionStatus
