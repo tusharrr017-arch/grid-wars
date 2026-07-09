@@ -4,7 +4,7 @@ import cors from "cors"
 import express from "express"
 
 const GRID_SIZE = 25
-const PORT = 3001
+const PORT = process.env.PORT || 3001;
 const PLAYER_TTL_MS = 30 * 60 * 1000
 
 const COLORS = [
@@ -97,7 +97,13 @@ app.use(cors())
 
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "https://YOUR-VERCEL-APP.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+  },
 })
 
 let tiles = createInitialTiles()
