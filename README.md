@@ -140,6 +140,11 @@ to test multiplayer.
 ---
 
 ## Screenshots
+1)Preview
+<img width="838" height="839" alt="image" src="https://github.com/user-attachments/assets/31ec5fab-2b53-4adf-8bf7-e1f849107c09" />
+
+2)Game
+<img width="1492" height="903" alt="image" src="https://github.com/user-attachments/assets/ccd89968-6870-4569-809b-6fd11432c65f" />
 
 
 ---
