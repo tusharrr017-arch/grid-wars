@@ -8,7 +8,7 @@ import { PlayerAvatar } from "@/components/ui/player-avatar"
 import { EmptyState } from "@/components/ui/empty-state"
 import { cn, formatTimeAgo } from "@/lib/utils"
 import { computeLeaderboard, getPlayerRank } from "@/lib/leaderboard"
-import { useIsMobile, useIsTablet } from "@/hooks/use-media-query"
+import { useIsCompactLayout, useIsMobile, useIsTablet } from "@/hooks/use-media-query"
 import type { CaptureEvent, Tile, User } from "@/types"
 
 interface SidebarProps {
@@ -28,6 +28,7 @@ export function Sidebar({
   gridSize,
   currentUserId,
 }: SidebarProps) {
+  const isCompact = useIsCompactLayout()
   const isMobile = useIsMobile()
   const isTablet = useIsTablet()
   const [collapsed, setCollapsed] = useState(false)
@@ -64,7 +65,7 @@ export function Sidebar({
     </div>
   )
 
-  if (isMobile) {
+  if (isCompact && isMobile) {
     return (
       <>
         <button
@@ -98,7 +99,7 @@ export function Sidebar({
     )
   }
 
-  if (isTablet && collapsed) {
+  if (isCompact && isTablet && collapsed) {
     return (
       <button
         onClick={() => setCollapsed(false)}
@@ -110,10 +111,21 @@ export function Sidebar({
     )
   }
 
+  if (!isCompact) {
+    return (
+      <aside
+        className="fixed right-0 top-16 z-40 flex h-[calc(100%-4rem)] w-[300px] flex-col border-l border-border bg-background"
+        aria-label="Game statistics"
+      >
+        <div className="flex-1 overflow-y-auto">{content}</div>
+      </aside>
+    )
+  }
+
   return (
     <aside
       className={cn(
-        "fixed right-0 top-14 z-40 flex h-[calc(100%-3.5rem)] flex-col border-l border-border bg-background md:top-16 md:h-[calc(100%-4rem)]",
+        "fixed right-0 top-14 z-40 flex h-[calc(100%-3.5rem)] flex-col border-l border-border bg-background",
         isTablet ? "w-[272px]" : "w-[300px]"
       )}
       aria-label="Game statistics"

@@ -9,7 +9,7 @@ import { GameGrid } from "@/components/grid/game-grid"
 import { Onboarding } from "@/components/layout/onboarding"
 import { useSocket } from "@/hooks/use-socket"
 import { useTheme } from "@/hooks/use-theme"
-import { useIsMobile } from "@/hooks/use-media-query"
+import { useIsCompactLayout, useIsMobile } from "@/hooks/use-media-query"
 import { useOnboardingDemo } from "@/hooks/use-onboarding-demo"
 import { isOnboardingComplete } from "@/lib/player-identity"
 import { cn } from "@/lib/utils"
@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils"
 const DEMO_GRID_SIZE = 25
 
 export default function App() {
+  const isCompact = useIsCompactLayout()
   const isMobile = useIsMobile()
   const { theme, toggleTheme } = useTheme()
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingComplete())
@@ -46,8 +47,6 @@ export default function App() {
   const displayPulsing = showOnboarding && demo ? demo.pulsingTiles : pulsingTiles
   const displayGridSize = showOnboarding ? DEMO_GRID_SIZE : gridSize
   const gridReady = showOnboarding ? !!demo : tiles.length > 0
-
-  const sidebarWidth = "md:pr-[272px] lg:pr-[300px]"
 
   const handleOnboardingComplete = (name: string, color: string) => {
     updateProfile(name, color)
@@ -80,12 +79,22 @@ export default function App() {
         <main
           id="main-content"
           className={cn(
-            "relative z-10 flex min-h-0 min-w-0 flex-1 overflow-hidden pt-14 md:pt-16",
-            !isMobile && sidebarWidth
+            "relative z-10 flex min-h-0 flex-1",
+            isCompact
+              ? "min-w-0 overflow-hidden pt-14"
+              : "pt-16 pr-[300px]",
+            isCompact && !isMobile && "pr-[272px]"
           )}
           aria-label="Game board"
         >
-          <div className="flex min-h-0 min-w-0 flex-1 items-stretch justify-center overflow-hidden">
+          <div
+            className={cn(
+              "flex min-h-0 flex-1",
+              isCompact
+                ? "min-w-0 items-stretch overflow-hidden"
+                : "items-center justify-center"
+            )}
+          >
             {gridReady ? (
               <GameGrid
                 tiles={displayTiles}

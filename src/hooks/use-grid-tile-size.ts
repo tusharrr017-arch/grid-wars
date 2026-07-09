@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useState, type RefObject } from "react"
+import { DESKTOP_MIN_WIDTH } from "@/hooks/use-media-query"
 
 export const TILE_GAP = 2
 export const TILE_SIZE_MAX = 36
 export const TILE_SIZE_MIN = 8
 
-const NAV_HEIGHT_MOBILE = 56
-const NAV_HEIGHT_DESKTOP = 64
-const VIEWPORT_INSET_MOBILE = 16
-const VIEWPORT_INSET_DESKTOP = 48
+const NAV_HEIGHT_COMPACT = 56
+const VIEWPORT_INSET_COMPACT = 16
 
 function estimateTileSize(gridSize: number): number {
   if (typeof window === "undefined") return TILE_SIZE_MAX
-  const nav = window.innerWidth < 768 ? NAV_HEIGHT_MOBILE : NAV_HEIGHT_DESKTOP
-  const inset = window.innerWidth < 768 ? VIEWPORT_INSET_MOBILE : VIEWPORT_INSET_DESKTOP
-  const w = window.innerWidth - inset
-  const h = window.innerHeight - nav - inset
+  if (window.innerWidth >= DESKTOP_MIN_WIDTH) return TILE_SIZE_MAX
+  const w = window.innerWidth - VIEWPORT_INSET_COMPACT
+  const h = window.innerHeight - NAV_HEIGHT_COMPACT - VIEWPORT_INSET_COMPACT
   return computeTileSize(w, h, gridSize)
 }
 
@@ -36,18 +34,30 @@ export function computeTileSize(
 
 export function useGridTileSize(
   slotRef: RefObject<HTMLElement | null>,
-  gridSize: number
+  gridSize: number,
+  enabled: boolean
 ): number {
-  const [tileSize, setTileSize] = useState(() => estimateTileSize(gridSize))
+  const [tileSize, setTileSize] = useState(() =>
+    enabled ? estimateTileSize(gridSize) : TILE_SIZE_MAX
+  )
 
   const measure = useCallback(() => {
+    if (!enabled) {
+      setTileSize(TILE_SIZE_MAX)
+      return
+    }
     const el = slotRef.current
     if (!el) return
     const { width, height } = el.getBoundingClientRect()
     setTileSize(computeTileSize(width, height, gridSize))
-  }, [slotRef, gridSize])
+  }, [slotRef, gridSize, enabled])
 
   useEffect(() => {
+    if (!enabled) {
+      setTileSize(TILE_SIZE_MAX)
+      return
+    }
+
     setTileSize(estimateTileSize(gridSize))
     measure()
 
@@ -63,7 +73,7 @@ export function useGridTileSize(
       window.removeEventListener("orientationchange", measure)
       window.removeEventListener("resize", measure)
     }
-  }, [slotRef, gridSize, measure])
+  }, [slotRef, gridSize, measure, enabled])
 
   return tileSize
 }

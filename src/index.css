@@ -152,7 +152,19 @@
   }
 
   .nav-bar-inner {
-    @apply mx-auto flex h-14 max-w-[1920px] items-center gap-3 px-3 sm:h-16 sm:gap-5 sm:px-5 md:px-8;
+    @apply mx-auto flex max-w-[1920px] items-center;
+  }
+
+  .nav-bar-inner--desktop {
+    @apply h-16 gap-5 px-5 sm:px-8;
+  }
+
+  .nav-bar-inner--compact {
+    @apply h-14 gap-3 px-3 sm:gap-5 sm:px-5 md:px-8;
+  }
+
+  .player-badge--desktop {
+    @apply px-3 py-1.5;
   }
 
   .logo-mark {
@@ -238,6 +250,10 @@
     @apply flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden;
   }
 
+  .game-grid-viewport--desktop {
+    @apply flex h-full min-h-0 w-full items-center justify-center overflow-auto px-6 py-8 sm:px-10;
+  }
+
   .game-grid-viewport {
     @apply flex h-full min-h-0 w-full min-w-0 max-w-full items-center justify-center overflow-hidden;
     padding: max(0.375rem, env(safe-area-inset-top, 0px))
@@ -250,33 +266,31 @@
     @apply flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden;
   }
 
-  @media (max-width: 767px) {
-    .grid-panel {
-      @apply h-full w-full max-w-full rounded-xl;
-      padding: 10px;
-      box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.04) inset,
-        0 8px 24px -12px var(--shadow-color);
-    }
-
-    .grid-panel-label {
-      @apply mb-0;
-    }
-
-    .game-grid-viewport {
-      @apply items-stretch;
-      padding: 6px;
-      padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom, 0px) + 3rem));
-    }
+  .grid-panel-label--compact {
+    @apply sr-only;
   }
 
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .grid-panel {
-      padding: 20px 24px;
+  @media (max-width: 999px) {
+    @media (max-width: 767px) {
+      .grid-panel--fit {
+        @apply h-full w-full max-w-full rounded-xl;
+        padding: 10px;
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.04) inset,
+          0 8px 24px -12px var(--shadow-color);
+      }
+
+      .game-grid-viewport {
+        @apply items-stretch;
+        padding: 6px;
+        padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom, 0px) + 3rem));
+      }
     }
 
-    .grid-panel-label {
-      @apply mb-4;
+    @media (min-width: 768px) {
+      .grid-panel--fit {
+        padding: 20px 24px;
+      }
     }
   }
 
@@ -599,7 +613,7 @@
     }
   }
 
-  @media (min-width: 768px) and (max-width: 1023px) {
+  @media (min-width: 768px) and (max-width: 999px) {
     .onboarding-popover {
       max-width: 520px;
       @apply px-10 py-12;

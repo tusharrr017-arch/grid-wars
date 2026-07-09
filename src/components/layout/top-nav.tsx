@@ -5,7 +5,7 @@ import { Grid3x3, Sun, Moon, Pencil, Check, X, Users, MapPin, Percent } from "lu
 import { Button } from "@/components/ui/button"
 import { PlayerAvatar } from "@/components/ui/player-avatar"
 import { ConnectionStatus } from "@/components/ui/connection-status"
-import { useIsMobile, useIsTablet } from "@/hooks/use-media-query"
+import { useIsCompactLayout, useIsMobile, useIsTablet } from "@/hooks/use-media-query"
 import type { User } from "@/types"
 
 interface TopNavProps {
@@ -31,6 +31,7 @@ export function TopNav({
   onToggleTheme,
   onUpdateUsername,
 }: TopNavProps) {
+  const isCompact = useIsCompactLayout()
   const isMobile = useIsMobile()
   const isTablet = useIsTablet()
   const [editing, setEditing] = useState(false)
@@ -49,9 +50,107 @@ export function TopNav({
     setEditing(false)
   }
 
+  if (!isCompact) {
+    return (
+      <header className="nav-bar">
+        <div className="nav-bar-inner nav-bar-inner--desktop">
+          <div className="flex min-w-0 items-center gap-3.5">
+            <div className="logo-mark" aria-hidden>
+              <Grid3x3 className="h-[18px] w-[18px] text-foreground" strokeWidth={2.25} />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-[15px] font-semibold tracking-[-0.02em] text-foreground">Grid</h1>
+              <p className="hidden text-[11px] tracking-wide text-muted-foreground sm:block">
+                Territory control
+              </p>
+            </div>
+          </div>
+
+          <div className="hidden flex-1 items-center justify-center gap-2 lg:flex">
+            <StatPill icon={MapPin} label="Claimed" value={`${totalClaimed}`} sub={`/ ${totalTiles}`} />
+            <StatPill icon={Percent} label="Coverage" value={`${coverage}%`} />
+            <StatPill icon={Users} label="Online" value={`${onlineCount}`} />
+          </div>
+
+          <div className="ml-auto flex items-center gap-2.5 sm:gap-3">
+            <div className="hidden items-center -space-x-2 md:flex" aria-label="Online players">
+              {onlineUsers.slice(0, 4).map((user) => (
+                <PlayerAvatar key={user.id} name={user.name} color={user.color} size="sm" />
+              ))}
+              {onlineCount > 4 && (
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card text-[10px] font-medium text-muted-foreground">
+                  +{onlineCount - 4}
+                </div>
+              )}
+            </div>
+
+            <ConnectionStatus status={status} playerCount={onlineCount} />
+
+            <div className="player-badge player-badge--desktop">
+              {editing ? (
+                <div className="flex items-center gap-1">
+                  <input
+                    autoFocus
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") saveName()
+                      if (e.key === "Escape") setEditing(false)
+                    }}
+                    className="w-24 bg-transparent text-sm outline-none focus-ring rounded sm:w-28"
+                    maxLength={20}
+                    aria-label="Username"
+                  />
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={saveName} aria-label="Save">
+                    <Check className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditing(false)} aria-label="Cancel">
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setNameInput(currentUser?.name ?? "")
+                    setEditing(true)
+                  }}
+                  className="flex max-w-[140px] items-center gap-2.5 group focus-ring rounded-lg sm:max-w-none"
+                  aria-label="Edit username"
+                >
+                  {currentUser && (
+                    <PlayerAvatar
+                      name={currentUser.name}
+                      color={currentUser.color}
+                      size="sm"
+                      showTooltip={false}
+                    />
+                  )}
+                  <span className="truncate text-sm font-medium tracking-[-0.01em]">
+                    {currentUser?.name ?? "…"}
+                  </span>
+                  <Pencil className="hidden h-3 w-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 sm:block" />
+                </button>
+              )}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggleTheme}
+              className="h-9 w-9 shrink-0 rounded-[10px] border border-transparent hover:border-border hover:bg-card focus-ring"
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          </div>
+        </div>
+      </header>
+    )
+  }
+
   return (
     <header className="nav-bar">
-      <div className="nav-bar-inner">
+      <div className="nav-bar-inner nav-bar-inner--compact">
         <div className="flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-3.5">
           <div className="logo-mark" aria-hidden>
             <Grid3x3 className="h-[18px] w-[18px] text-foreground" strokeWidth={2.25} />
@@ -64,7 +163,7 @@ export function TopNav({
           </div>
         </div>
 
-        <div className="hidden flex-1 items-center justify-center gap-2 md:flex lg:gap-2.5">
+        <div className="hidden flex-1 items-center justify-center gap-2 md:flex">
           <StatPill icon={MapPin} label="Claimed" value={`${totalClaimed}`} sub={`/ ${totalTiles}`} compact={isTablet} />
           <StatPill icon={Percent} label="Coverage" value={`${coverage}%`} compact={isTablet} />
           <StatPill icon={Users} label="Online" value={`${onlineCount}`} compact={isTablet} />
@@ -72,7 +171,7 @@ export function TopNav({
 
         <div className="ml-auto flex min-w-0 items-center gap-1.5 sm:gap-2.5">
           {!isMobile && (
-            <div className="hidden items-center -space-x-2 lg:flex" aria-label="Online players">
+            <div className="hidden items-center -space-x-2 md:flex" aria-label="Online players">
               {onlineUsers.slice(0, 4).map((user) => (
                 <PlayerAvatar key={user.id} name={user.name} color={user.color} size="sm" />
               ))}
