@@ -188,12 +188,12 @@ A production implementation would use:
 
 ---
 
-## 📝 Notes
+##  Notes
 
 This project was built as part of a real-time multiplayer engineering assignment, with a focus on backend synchronization, real-time communication, responsive UI, and clean architecture.
 
 ---
 
-## 📄 License
+##  License
 
 MIT
