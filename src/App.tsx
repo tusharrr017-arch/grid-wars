@@ -9,7 +9,7 @@ import { GameGrid } from "@/components/grid/game-grid"
 import { Onboarding } from "@/components/layout/onboarding"
 import { useSocket } from "@/hooks/use-socket"
 import { useTheme } from "@/hooks/use-theme"
-import { useIsMobile, useIsTablet } from "@/hooks/use-media-query"
+import { useIsMobile } from "@/hooks/use-media-query"
 import { useOnboardingDemo } from "@/hooks/use-onboarding-demo"
 import { isOnboardingComplete } from "@/lib/player-identity"
 import { cn } from "@/lib/utils"
@@ -18,7 +18,6 @@ const DEMO_GRID_SIZE = 25
 
 export default function App() {
   const isMobile = useIsMobile()
-  const isTablet = useIsTablet()
   const { theme, toggleTheme } = useTheme()
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingComplete())
 
@@ -48,7 +47,7 @@ export default function App() {
   const displayGridSize = showOnboarding ? DEMO_GRID_SIZE : gridSize
   const gridReady = showOnboarding ? !!demo : tiles.length > 0
 
-  const sidebarWidth = isTablet ? "md:pr-[272px]" : "md:pr-[300px]"
+  const sidebarWidth = "md:pr-[272px] lg:pr-[300px]"
 
   const handleOnboardingComplete = (name: string, color: string) => {
     updateProfile(name, color)
@@ -81,12 +80,12 @@ export default function App() {
         <main
           id="main-content"
           className={cn(
-            "relative z-10 flex min-h-0 flex-1 pt-[64px]",
+            "relative z-10 flex min-h-0 min-w-0 flex-1 overflow-hidden pt-14 md:pt-16",
             !isMobile && sidebarWidth
           )}
           aria-label="Game board"
         >
-          <div className="flex min-h-0 flex-1 items-center justify-center">
+          <div className="flex min-h-0 min-w-0 flex-1 items-stretch justify-center overflow-hidden">
             {gridReady ? (
               <GameGrid
                 tiles={displayTiles}

@@ -69,7 +69,7 @@ export function Sidebar({
       <>
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed bottom-5 right-5 z-50 flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium shadow-lg focus-ring md:hidden"
+          className="stats-fab fixed z-50 flex h-12 items-center gap-2 rounded-full border border-border bg-card px-5 text-sm font-medium shadow-lg focus-ring md:hidden"
           aria-label="Open stats panel"
         >
           <BarChart3 className="h-4 w-4" strokeWidth={2} />
@@ -113,7 +113,7 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "fixed right-0 top-[64px] z-40 flex h-[calc(100%-64px)] flex-col border-l border-border bg-background",
+        "fixed right-0 top-14 z-40 flex h-[calc(100%-3.5rem)] flex-col border-l border-border bg-background md:top-16 md:h-[calc(100%-4rem)]",
         isTablet ? "w-[272px]" : "w-[300px]"
       )}
       aria-label="Game statistics"

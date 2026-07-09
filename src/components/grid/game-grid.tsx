@@ -1,8 +1,6 @@
-import { memo, useMemo } from "react"
+import { memo, useMemo, useRef } from "react"
 import { GridTile } from "./grid-tile"
-
-export const TILE_SIZE = 36
-export const TILE_GAP = 2
+import { TILE_GAP, useGridTileSize } from "@/hooks/use-grid-tile-size"
 
 interface TileData {
   x: number
@@ -27,45 +25,50 @@ export const GameGrid = memo(function GameGrid({
   pulseVersions,
   onClaim,
 }: GameGridProps) {
+  const gridSlotRef = useRef<HTMLDivElement>(null)
+  const tileSize = useGridTileSize(gridSlotRef, gridSize)
+
   const gridStyle = useMemo(
     () => ({
-      gridTemplateColumns: `repeat(${gridSize}, ${TILE_SIZE}px)`,
+      gridTemplateColumns: `repeat(${gridSize}, ${tileSize}px)`,
       gap: TILE_GAP,
-      width: gridSize * (TILE_SIZE + TILE_GAP) - TILE_GAP,
-      height: gridSize * (TILE_SIZE + TILE_GAP) - TILE_GAP,
+      width: gridSize * (tileSize + TILE_GAP) - TILE_GAP,
+      height: gridSize * (tileSize + TILE_GAP) - TILE_GAP,
     }),
-    [gridSize]
+    [gridSize, tileSize]
   )
 
   return (
-    <div className="flex h-full min-h-0 w-full items-center justify-center overflow-auto px-6 py-8 sm:px-10">
-      <div className="grid-panel">
-        <p className="grid-panel-label">Territory map</p>
-        <div
-          className="grid gpu"
-          style={gridStyle}
-          role="grid"
-          aria-label={`${gridSize} by ${gridSize} territory grid`}
-          aria-rowcount={gridSize}
-          aria-colcount={gridSize}
-        >
-          {tiles.map((tile) => {
-            const key = `${tile.x}-${tile.y}`
-            return (
-              <GridTile
-                key={key}
-                x={tile.x}
-                y={tile.y}
-                ownerId={tile.ownerId}
-                ownerName={tile.ownerName}
-                color={tile.color}
-                size={TILE_SIZE}
-                isMine={tile.ownerId === currentUserId}
-                pulseVersion={pulseVersions[key] ?? 0}
-                onClaim={onClaim}
-              />
-            )
-          })}
+    <div className="game-grid-viewport">
+      <div className="grid-panel grid-panel--fit">
+        <p className="grid-panel-label max-md:sr-only">Territory map</p>
+        <div ref={gridSlotRef} className="grid-slot">
+          <div
+            className="grid gpu"
+            style={gridStyle}
+            role="grid"
+            aria-label={`${gridSize} by ${gridSize} territory grid`}
+            aria-rowcount={gridSize}
+            aria-colcount={gridSize}
+          >
+            {tiles.map((tile) => {
+              const key = `${tile.x}-${tile.y}`
+              return (
+                <GridTile
+                  key={key}
+                  x={tile.x}
+                  y={tile.y}
+                  ownerId={tile.ownerId}
+                  ownerName={tile.ownerName}
+                  color={tile.color}
+                  size={tileSize}
+                  isMine={tile.ownerId === currentUserId}
+                  pulseVersion={pulseVersions[key] ?? 0}
+                  onClaim={onClaim}
+                />
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
