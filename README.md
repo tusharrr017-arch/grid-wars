@@ -24,7 +24,7 @@ A real-time multiplayer territory map where multiple users compete to claim tile
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 ### Frontend
 
